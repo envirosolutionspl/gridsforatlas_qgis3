@@ -1,0 +1,19 @@
+# This file contains metadata for your plugin. Beginning
+# with version 1.8 this is the preferred way to supply information about a
+# plugin. The current method of embedding metadata in __init__.py will
+# be supported until version 2.0
+
+# This file should be included when you package your plugin.
+
+[general]
+name=Grids for Atlas
+description=Create grids for atlas
+version=0.4.0
+author=Bertrand Chaussat
+email=bertrand.chaussat@free.fr
+qgisMinimumVersion=2.0
+experimental=True
+about=The plugin allows to create grid layers to feed in the composer atlas generator
+repository=http://hub.qgis.org/projects/synoptiquesatlas/repository
+tracker=http://hub.qgis.org/projects/synoptiquesatlas/issues
+homepage=http://hub.qgis.org/projects/synoptiquesatlas
