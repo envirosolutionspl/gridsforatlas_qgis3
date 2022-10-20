@@ -6,14 +6,14 @@
 # This file should be included when you package your plugin.
 
 [general]
-name=Grids for Atlas
+name=Grids for Atlas for QGIS 3
 description=Create grids for atlas
 version=0.4.0
-author=Bertrand Chaussat
-email=bertrand.chaussat@free.fr
-qgisMinimumVersion=2.0
+author=Bertrand Chaussat, Michal Wloga
+email=office@envirosolutions.pl
+qgisMinimumVersion=3.0
 experimental=True
 about=The plugin allows to create grid layers to feed in the composer atlas generator
-repository=http://hub.qgis.org/projects/synoptiquesatlas/repository
-tracker=http://hub.qgis.org/projects/synoptiquesatlas/issues
-homepage=http://hub.qgis.org/projects/synoptiquesatlas
+repository=https://github.com/envirosolutionspl/gridsforatlas_qgis3
+tracker=https://github.com/envirosolutionspl/gridsforatlas_qgis3/issues
+homepage=https://github.com/envirosolutionspl/gridsforatlas_qgis3

@@ -47,8 +47,5 @@ Version 0.4.0</string>
    </property>
   </widget>
  </widget>
- <resources>
-  <include location="resources.qrc"/>
- </resources>
  <connections/>
 </ui>

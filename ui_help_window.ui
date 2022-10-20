@@ -28,7 +28,7 @@
    <property name="frameShadow">
     <enum>QFrame::Raised</enum>
    </property>
-   <widget class="QWebView" name="webView">
+   <widget class="QWebView" name="webView" native="true">
     <property name="geometry">
      <rect>
       <x>0</x>
@@ -37,7 +37,7 @@
       <height>491</height>
      </rect>
     </property>
-    <property name="url">
+    <property name="url" stdset="0">
      <url>
       <string>about:blank</string>
      </url>

@@ -23,16 +23,17 @@
 """
 import os
 # Import the PyQt and QGIS libraries
-from PyQt4.QtCore import *
-from PyQt4.QtGui import *
+from PyQt5.QtCore import *
+from PyQt5.QtGui import *
+from PyQt5.QtWidgets import *
 from qgis.core import *
 from qgis.gui import *
 # Initialize Qt resources from file resources.py
-import resources_rc
+from . import resources
 # Import the code for the dialog
-from synoptiquesatlasdialog import SynoptiquesAtlasDialog
-from ui_help_window import Ui_help_window
-from ui_about_window import Ui_About_window
+from .synoptiquesatlasdialog import SynoptiquesAtlasDialog
+from .ui_help_window import Ui_help_window
+from .ui_about_window import Ui_About_window
 
 class SynoptiquesAtlas:
 
@@ -42,8 +43,8 @@ class SynoptiquesAtlas:
     # a reference to our map canvas
     self.canvas = self.iface.mapCanvas()
     # Setup directory
-    self.user_plugin_dir = QFileInfo(QgsApplication.qgisUserDbFilePath()).path() + "/python/plugins"
-    self.syn_atlas_plugin_dir = self.user_plugin_dir + "/synoptiquesatlas"
+    self.user_plugin_dir = QFileInfo(QgsApplication.qgisUserDatabaseFilePath()).path() + "/python/plugins"
+    self.syn_atlas_plugin_dir = self.user_plugin_dir + "/gridsforatlas_qgis3"
     # Translation to English    
     locale = QSettings().value("locale/userLocale")
     self.myLocale = locale[0:2]
@@ -59,34 +60,45 @@ class SynoptiquesAtlas:
 
   def initGui(self):
     # Create action that will start plugin configuration
-    self.action = QAction(QIcon(":/plugins/synoptiquesatlas/icon.png"), \
+    self.action = QAction(QIcon(":/plugins/gridsforatlas_qgis3/icon.png"), \
       QCoreApplication.translate("synoptiquesatlas", "&Grids for Atlas"), self.iface.mainWindow())
     # Create action for about dialog
     self.action_about = QAction("A&bout...", self.iface.mainWindow())
     # Create action for help dialog
-    self.action_help = QAction(QIcon(":/plugins/synoptiquesatlas/about.png"), QCoreApplication.translate("synoptiquesatlas", "&Help..."), self.iface.mainWindow())
+    self.action_help = QAction(QIcon(":/plugins/gridsforatlas_qgis3/about.png"), QCoreApplication.translate("synoptiquesatlas", "&Help..."), self.iface.mainWindow())
     # connect the action to the run method
-    QObject.connect(self.action, SIGNAL("triggered()"), self.run)
+    self.action.triggered.connect(self.run)
+    # QObject.connect(self.action, SIGNAL("triggered()"), self.run)
     # connect about action to about dialog
-    QObject.connect(self.action_about, SIGNAL("triggered()"), self.showAbout)    
+    self.action_about.triggered.connect(self.showAbout)
+    # QObject.connect(self.action_about, SIGNAL("triggered()"), self.showAbout)
     # connect help action to help dialog
-    QObject.connect(self.action_help, SIGNAL("triggered()"), self.showHelp)
+    self.action_help.triggered.connect(self.showHelp)
+    # QObject.connect(self.action_help, SIGNAL("triggered()"), self.showHelp)
     # connect signals
-    QObject.connect(self.dlg.ui.btnCreerSyno, SIGNAL("clicked()"), self.creerSyno)
+    self.dlg.ui.btnCreerSyno.clicked.connect(self.creerSyno)
+    # QObject.connect(self.dlg.ui.btnCreerSyno, SIGNAL("clicked()"), self.creerSyno)
     # composer changed, update maps
-    QObject.connect(self.dlg.ui.cbbComp, SIGNAL('currentIndexChanged(int)'), self.updateMaps)    
+    self.dlg.ui.cbbComp.currentIndexChanged.connect(self.updateMaps)
+    # QObject.connect(self.dlg.ui.cbbComp, SIGNAL('currentIndexChanged(int)'), self.updateMaps)
     # refresh inLayer box
-    QObject.connect(self.dlg.ui.cbbInLayer, SIGNAL('currentIndexChanged(int)'), self.onLayerChange)
+    self.dlg.ui.cbbInLayer.currentIndexChanged.connect(self.onLayerChange)
+    # QObject.connect(self.dlg.ui.cbbInLayer, SIGNAL('currentIndexChanged(int)'), self.onLayerChange)
     # browse button
-    QObject.connect(self.dlg.ui.btnBrowse, SIGNAL('clicked()'), self.updateOutputDir)
+    self.dlg.ui.btnBrowse.clicked.connect(self.updateOutputDir)
+    # QObject.connect(self.dlg.ui.btnBrowse, SIGNAL('clicked()'), self.updateOutputDir)
     # refresh template button
-    QObject.connect(self.dlg.ui.btnUpdate, SIGNAL('clicked()'), self.updateComposers)
+    self.dlg.ui.btnUpdate.clicked.connect(self.updateComposers)
+    # QObject.connect(self.dlg.ui.btnUpdate, SIGNAL('clicked()'), self.updateComposers)
     # show composer
-    QObject.connect(self.dlg.ui.btnShow, SIGNAL('clicked()'), self.showComposer)
+    self.dlg.ui.btnShow.clicked.connect(self.showComposer)
+    # QObject.connect(self.dlg.ui.btnShow, SIGNAL('clicked()'), self.showComposer)
     # show about dialog
-    QObject.connect(self.dlg.ui.aboutButton, SIGNAL('clicked()'), self.showAbout)
+    self.dlg.ui.aboutButton.clicked.connect(self.showAbout)
+    # QObject.connect(self.dlg.ui.aboutButton, SIGNAL('clicked()'), self.showAbout)
     # show help dialog
-    QObject.connect(self.dlg.ui.helpButton, SIGNAL('clicked()'), self.showHelp)
+    self.dlg.ui.helpButton.clicked.connect(self.showHelp)
+    # QObject.connect(self.dlg.ui.helpButton, SIGNAL('clicked()'), self.showHelp)
     # Add toolbar button and menu item
     self.iface.addToolBarIcon(self.action)
     self.iface.addPluginToMenu("&Grids for Atlas", self.action)
@@ -120,7 +132,11 @@ class SynoptiquesAtlas:
 
   def updateComposers(self):
     self.dlg.ui.cbbComp.clear()
-    compos = self.iface.activeComposers()
+    projectInstance = QgsProject.instance()
+    projectLayoutManager = projectInstance.layoutManager()
+
+    compos = QgsProject.instance().layoutManager().layouts()
+    # compos = self.iface.activeComposers()
     for cv in compos:
       self.dlg.ui.cbbComp.addItem(cv.composerWindow().windowTitle(), cv)
     self.composer = self.dlg.ui.cbbComp.itemData(self.dlg.ui.cbbComp.currentIndex())
